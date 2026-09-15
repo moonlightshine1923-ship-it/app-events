@@ -1,6 +1,7 @@
 import express from 'express';
 import pool from '../config/db.js';
 import { authenticate } from '../middleware/auth.js';
+import upload from '../middleware/upload.js';
 const router = express.Router();
 
 // Get by event
@@ -21,22 +22,37 @@ router.get('/event/:eventId', async (req,res)=>{
   res.json(rows);
 });
 
-router.post('/', authenticate, async (req,res)=>{
+router.get('/:id', async (req,res)=>{
+  const [rows]= await pool.query('SELECT * FROM personnes WHERE id=?',[req.params.id]);
+  if(!rows.length) return res.status(404).json({error:'Non trouvé'});
+  res.json(rows[0]);
+});
+
+router.post('/', authenticate, upload.single('fichier'), async (req,res)=>{
   const { event_id, type, type_custom, nom, prenom, email, telephone, entreprise, poste, pays, wilaya_id, notes } = req.body;
   if(!event_id||!type||!nom||!prenom) return res.status(400).json({error:'Champs requis manquants'});
+  const fichier_path = req.file ? '/'+req.file.path : null;
   const [result]= await pool.query(
-    `INSERT INTO personnes (event_id,type,type_custom,nom,prenom,email,telephone,entreprise,poste,pays,wilaya_id,notes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
-    [event_id,type,type_custom||null,nom,prenom,email||null,telephone||null,entreprise||null,poste||null,pays||'Algérie',wilaya_id||null,notes||null]
+    `INSERT INTO personnes (event_id,type,type_custom,nom,prenom,email,telephone,entreprise,poste,pays,wilaya_id,notes,fichier_path) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    [event_id,type,type_custom||null,nom,prenom,email||null,telephone||null,entreprise||null,poste||null,pays||'Algérie',wilaya_id||null,notes||null,fichier_path]
   );
   res.json({ id: result.insertId });
 });
 
-router.put('/:id', authenticate, async (req,res)=>{
+router.put('/:id', authenticate, upload.single('fichier'), async (req,res)=>{
   const { type, type_custom, nom, prenom, email, telephone, entreprise, poste, pays, wilaya_id, notes } = req.body;
-  await pool.query(
-    `UPDATE personnes SET type=?,type_custom=?,nom=?,prenom=?,email=?,telephone=?,entreprise=?,poste=?,pays=?,wilaya_id=?,notes=? WHERE id=?`,
-    [type,type_custom||null,nom,prenom,email,telephone,entreprise,poste,pays,wilaya_id||null,notes,req.params.id]
-  );
+  const fichier_path = req.file ? '/'+req.file.path : null;
+  if (fichier_path) {
+    await pool.query(
+      `UPDATE personnes SET type=?,type_custom=?,nom=?,prenom=?,email=?,telephone=?,entreprise=?,poste=?,pays=?,wilaya_id=?,notes=?,fichier_path=? WHERE id=?`,
+      [type,type_custom||null,nom,prenom,email,telephone,entreprise,poste,pays,wilaya_id||null,notes,fichier_path,req.params.id]
+    );
+  } else {
+    await pool.query(
+      `UPDATE personnes SET type=?,type_custom=?,nom=?,prenom=?,email=?,telephone=?,entreprise=?,poste=?,pays=?,wilaya_id=?,notes=? WHERE id=?`,
+      [type,type_custom||null,nom,prenom,email,telephone,entreprise,poste,pays,wilaya_id||null,notes,req.params.id]
+    );
+  }
   res.json({ message:'ok' });
 });
 

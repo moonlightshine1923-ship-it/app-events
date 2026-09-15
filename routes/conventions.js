@@ -9,6 +9,12 @@ router.get('/event/:eventId', async (req,res)=>{
   res.json(rows.map(r=>({...r, document_paths: typeof r.document_paths==='string'? JSON.parse(r.document_paths||'[]'): r.document_paths})));
 });
 
+router.get('/:id', async (req,res)=>{
+  const [rows]= await pool.query('SELECT * FROM conventions WHERE id=?',[req.params.id]);
+  if(!rows.length) return res.status(404).json({error:'Non trouvé'});
+  res.json(rows[0]);
+});
+
 router.post('/', authenticate, upload.array('convention_doc',5), async (req,res)=>{
   const { event_id, type, type_custom, fournisseur, titre, montant, montant_paye, date_debut, date_fin, statut, description, contact } = req.body;
   const docs = req.files ? req.files.map(f=>f.path) : [];

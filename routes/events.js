@@ -1,6 +1,7 @@
 import express from 'express';
 import pool from '../config/db.js';
 import { authenticate } from '../middleware/auth.js';
+import upload from '../middleware/upload.js';
 const router = express.Router();
 
 // List
@@ -54,14 +55,21 @@ router.delete('/:id', authenticate, async (req,res)=>{
   res.json({ message:'supprimé' });
 });
 
+router.post('/:id/plan-photo', authenticate, upload.single('plan_photo'), async (req,res)=>{
+  const plan_photo = req.file ? '/'+req.file.path : null;
+  if(!plan_photo) return res.status(400).json({error:'Fichier requis'});
+  await pool.query('UPDATE events SET plan_photo=? WHERE id=?',[plan_photo,req.params.id]);
+  res.json({ message:'Plan mis à jour', plan_photo });
+});
+
 // FINANCE SUMMARY
 router.get('/:id/finance', async (req,res)=>{
   const eventId = req.params.id;
   const [[event]] = await pool.query('SELECT * FROM events WHERE id=?',[eventId]);
   if(!event) return res.status(404).json({error:'Event non trouvé'});
 
-  const [[entrantsExposants]] = await pool.query('SELECT COALESCE(SUM(montant_paye),0) as total FROM exposants WHERE event_id=? AND a_paye=1',[eventId]);
-  const [[entrantsSponsors]] = await pool.query('SELECT COALESCE(SUM(montant),0) as total FROM sponsors WHERE event_id=?',[eventId]);
+  const [[entrantsExposants]] = await pool.query('SELECT COALESCE(SUM(montant_paye),0) as total FROM exposants WHERE event_id=? AND (a_paye=1 OR montant_paye > 0)',[eventId]);
+  const [[entrantsSponsors]] = await pool.query('SELECT COALESCE(SUM(montant),0) as total FROM sponsors WHERE event_id=? AND (statut_paiement="paye" OR statut_paiement="partiel" OR montant > 0)',[eventId]);
   const totalEntrants = parseFloat(event.budget_initial||0) + parseFloat(entrantsExposants.total||0) + parseFloat(entrantsSponsors.total||0);
 
   const [[sortantsEmployes]] = await pool.query('SELECT COALESCE(SUM(salaire_jour * nb_jours),0) as total FROM employes WHERE event_id=?',[eventId]);

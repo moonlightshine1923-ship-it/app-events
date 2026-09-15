@@ -1,12 +1,13 @@
 import express from 'express';
 import pool from '../config/db.js';
 import { authenticate } from '../middleware/auth.js';
+import upload from '../middleware/upload.js';
 const router = express.Router();
 
 // Liste par event
 router.get('/event/:eventId', async (req,res)=>{
   const [rows]= await pool.query(`
-    SELECT ex.*, p.nom, p.prenom, p.email, p.telephone, p.entreprise, p.type, p.poste,
+    SELECT ex.*, p.nom, p.prenom, p.email, p.telephone, p.entreprise, p.type, p.poste, p.wilaya_id,
            s.numero as stand_numero, s.zone, s.statut as stand_statut
     FROM exposants ex
     JOIN personnes p ON p.id=ex.personne_id
@@ -16,15 +17,28 @@ router.get('/event/:eventId', async (req,res)=>{
   res.json(rows);
 });
 
-router.post('/', authenticate, async (req,res)=>{
+router.get('/:id', async (req,res)=>{
+  const [rows]= await pool.query(`
+    SELECT ex.*, p.nom, p.prenom, p.email, p.telephone, p.entreprise, p.type, p.poste, p.wilaya_id,
+           s.numero as stand_numero, s.zone, s.statut as stand_statut
+    FROM exposants ex
+    JOIN personnes p ON p.id=ex.personne_id
+    LEFT JOIN stands s ON s.exposant_id=ex.id
+    WHERE ex.id=?`, [req.params.id]);
+  if(!rows.length) return res.status(404).json({error:'Non trouvé'});
+  res.json(rows[0]);
+});
+
+router.post('/', authenticate, upload.single('fichier'), async (req,res)=>{
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
     const { event_id, personne_id, personne_data, fiche_technique, convoque_par, domaine_activite, superficie_demandee, a_paye, methode_paiement, montant_paye, montant_restant, besoins_speciaux } = req.body;
+    const fichier_path = req.file ? '/'+req.file.path : null;
     let pid = personne_id;
     if(!pid && personne_data){
       // Créer personne d'abord
-      const { nom, prenom, email, telephone, entreprise, poste, wilaya_id } = personne_data;
+      const { nom, prenom, email, telephone, entreprise, poste, wilaya_id } = typeof personne_data==='string' ? JSON.parse(personne_data) : personne_data;
       const [pr]= await conn.query(
         `INSERT INTO personnes (event_id,type,nom,prenom,email,telephone,entreprise,poste,wilaya_id) VALUES (?,'exposant',?,?,?,?,?, ?, ?)`,
         [event_id, nom, prenom, email, telephone, entreprise, poste, wilaya_id||null]
@@ -36,9 +50,9 @@ router.post('/', authenticate, async (req,res)=>{
       return res.status(400).json({error:'event_id et personne_id requis'});
     }
     const [ex]= await conn.query(
-      `INSERT INTO exposants (personne_id,event_id,fiche_technique,convoque_par,domaine_activite,superficie_demandee,a_paye,methode_paiement,montant_paye,montant_restant,besoins_speciaux)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
-      [pid,event_id,fiche_technique,convoque_par,domaine_activite,superficie_demandee,a_paye?1:0,methode_paiement||null,montant_paye||0,montant_restant||0,besoins_speciaux]
+      `INSERT INTO exposants (personne_id,event_id,fiche_technique,convoque_par,domaine_activite,superficie_demandee,a_paye,methode_paiement,montant_paye,montant_restant,besoins_speciaux,fichier_path)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
+      [pid,event_id,fiche_technique,convoque_par,domaine_activite,superficie_demandee,a_paye?1:0,methode_paiement||null,montant_paye||0,montant_restant||0,besoins_speciaux,fichier_path]
     );
     const exposantId = ex.insertId;
 
@@ -66,12 +80,20 @@ router.post('/', authenticate, async (req,res)=>{
   }
 });
 
-router.put('/:id', authenticate, async (req,res)=>{
+router.put('/:id', authenticate, upload.single('fichier'), async (req,res)=>{
   const { fiche_technique, convoque_par, domaine_activite, superficie_demandee, a_paye, methode_paiement, montant_paye, montant_restant, besoins_speciaux } = req.body;
-  await pool.query(
-    `UPDATE exposants SET fiche_technique=?,convoque_par=?,domaine_activite=?,superficie_demandee=?,a_paye=?,methode_paiement=?,montant_paye=?,montant_restant=?,besoins_speciaux=? WHERE id=?`,
-    [fiche_technique,convoque_par,domaine_activite,superficie_demandee,a_paye?1:0,methode_paiement,montant_paye||0,montant_restant||0,besoins_speciaux,req.params.id]
-  );
+  const fichier_path = req.file ? '/'+req.file.path : null;
+  if(fichier_path){
+    await pool.query(
+      `UPDATE exposants SET fiche_technique=?,convoque_par=?,domaine_activite=?,superficie_demandee=?,a_paye=?,methode_paiement=?,montant_paye=?,montant_restant=?,besoins_speciaux=?,fichier_path=? WHERE id=?`,
+      [fiche_technique,convoque_par,domaine_activite,superficie_demandee,a_paye?1:0,methode_paiement,montant_paye||0,montant_restant||0,besoins_speciaux,fichier_path,req.params.id]
+    );
+  } else {
+    await pool.query(
+      `UPDATE exposants SET fiche_technique=?,convoque_par=?,domaine_activite=?,superficie_demandee=?,a_paye=?,methode_paiement=?,montant_paye=?,montant_restant=?,besoins_speciaux=? WHERE id=?`,
+      [fiche_technique,convoque_par,domaine_activite,superficie_demandee,a_paye?1:0,methode_paiement,montant_paye||0,montant_restant||0,besoins_speciaux,req.params.id]
+    );
+  }
   res.json({ message:'ok' });
 });
 

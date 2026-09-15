@@ -87,6 +87,15 @@ router.delete('/:id/occupants/:personneId', authenticate, async (req,res)=>{
   } finally { conn.release(); }
 });
 
+router.put('/:id', authenticate, async (req,res)=>{
+  const { hotel_id, type_chambre, numero_chambre, capacite_max, prix_nuit, nb_nuits, date_arrivee, date_depart, statut, notes } = req.body;
+  await pool.query(
+    `UPDATE reservations_hotel SET hotel_id=?, type_chambre=?, numero_chambre=?, capacite_max=?, prix_nuit=?, nb_nuits=?, date_arrivee=?, date_depart=?, statut=?, notes=? WHERE id=?`,
+    [hotel_id, type_chambre, numero_chambre||null, capacite_max||(type_chambre==='single'?1:type_chambre==='double'?2:3), prix_nuit||0, nb_nuits||1, date_arrivee||null, date_depart||null, statut||'reservee', notes||null, req.params.id]
+  );
+  res.json({ message: 'ok' });
+});
+
 router.delete('/:id', authenticate, async (req,res)=>{
   await pool.query('DELETE FROM reservations_hotel WHERE id=?',[req.params.id]);
   res.json({ message:'supprimé' });

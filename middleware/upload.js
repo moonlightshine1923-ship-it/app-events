@@ -13,6 +13,8 @@ const storage = multer.diskStorage({
     else if (file.fieldname === 'billet') folder = 'uploads/billets';
     else if (file.fieldname === 'convention_doc') folder = 'uploads/conventions';
     else if (file.fieldname === 'logo') folder = 'uploads/sponsors';
+    else if (file.fieldname === 'fichier') folder = 'uploads/documents';
+    else if (file.fieldname === 'plan_photo') folder = 'uploads/plans';
     ensureDir(folder);
     cb(null, folder);
   },

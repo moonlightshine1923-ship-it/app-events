@@ -44,9 +44,10 @@ CREATE TABLE IF NOT EXISTS hotels (
   telephone VARCHAR(30),
   email VARCHAR(255),
   site_web VARCHAR(255),
-  capacite INT DEFAULT 0,
+  nb_chambres_single INT DEFAULT 0,
+  nb_chambres_double INT DEFAULT 0,
+  nb_chambres_suite INT DEFAULT 0,
   prix_moyen DECIMAL(12,2) DEFAULT 0,
-  contact_reservation VARCHAR(255),
   notes TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (wilaya_id) REFERENCES wilayas(id) ON DELETE CASCADE
@@ -71,6 +72,7 @@ CREATE TABLE IF NOT EXISTS events (
   nb_exposants_prevu INT DEFAULT 0,
   nb_vip_prevu INT DEFAULT 0,
   statut ENUM('brouillon','planifie','en_cours','termine','annule') DEFAULT 'brouillon',
+  plan_photo VARCHAR(500),
   created_by INT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -94,6 +96,7 @@ CREATE TABLE IF NOT EXISTS personnes (
   pays VARCHAR(100) DEFAULT 'Algérie',
   wilaya_id INT,
   notes TEXT,
+  fichier_path VARCHAR(500),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
   FOREIGN KEY (wilaya_id) REFERENCES wilayas(id) ON DELETE SET NULL
@@ -115,6 +118,7 @@ CREATE TABLE IF NOT EXISTS exposants (
   montant_restant DECIMAL(12,2) DEFAULT 0,
   date_paiement DATE,
   besoins_speciaux TEXT,
+  fichier_path VARCHAR(500),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (personne_id) REFERENCES personnes(id) ON DELETE CASCADE,
   FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
@@ -148,7 +152,7 @@ CREATE TABLE IF NOT EXISTS employes (
   event_id INT NOT NULL,
   nom VARCHAR(150) NOT NULL,
   prenom VARCHAR(150) NOT NULL,
-  poste ENUM('hotesse_accueil','agent_securite','organisateur','technicien','chauffeur','nettoyage','autre') NOT NULL,
+  poste VARCHAR(150) NOT NULL,
   poste_custom VARCHAR(150),
   telephone VARCHAR(50),
   email VARCHAR(255),
@@ -160,6 +164,15 @@ CREATE TABLE IF NOT EXISTS employes (
   nb_jours INT DEFAULT 1,
   salaire_total DECIMAL(12,2) GENERATED ALWAYS AS (salaire_jour * nb_jours) STORED,
   statut_paiement ENUM('non_paye','paye','partiel') DEFAULT 'non_paye',
+  fichier_path VARCHAR(500),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS postes_employes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  event_id INT NOT NULL,
+  titre VARCHAR(150) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
 );

@@ -20,12 +20,21 @@ export const authenticate = async (req, res, next) => {
   }
 };
 
+// Normalize a role so "super_admin", "superAdmin", "Super_Admin", "SUPERADMIN" all match.
+const normalizeRole = (r) => String(r || '').toLowerCase().replace(/[^a-z]/g, '');
+export const isPrivilegedRole = (r) => {
+  const n = normalizeRole(r);
+  return n === 'superadmin' || n === 'admin' || n === 'administrator';
+};
+
 export const authorize = (...roles) => {
   return (req, res, next) => {
     if (!req.user) return res.status(401).json({ error: 'Non authentifié' });
-    if (roles.length && !roles.includes(req.user.role) && req.user.role !== 'super_admin') {
-      return res.status(403).json({ error: 'Accès refusé' });
-    }
+    const ok = roles.length === 0
+      || roles.includes(req.user.role)
+      || isPrivilegedRole(req.user.role)
+      || (req.user.permissions && (req.user.permissions.all || req.user.permissions.users));
+    if (!ok) return res.status(403).json({ error: 'Accès refusé' });
     next();
   };
 };
@@ -33,7 +42,7 @@ export const authorize = (...roles) => {
 // Permission check granular
 export const checkPermission = (permKey) => {
   return (req, res, next) => {
-    if (req.user.role === 'super_admin' || req.user.role === 'admin') return next();
+    if (req.user.role && isPrivilegedRole(req.user.role)) return next();
     const perms = req.user.permissions || {};
     if (perms[permKey] || perms['all']) return next();
     return res.status(403).json({ error: `Permission ${permKey} requise` });

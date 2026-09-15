@@ -120,6 +120,13 @@ app.post('/api/init-db', async (req,res)=>{
 // Audit middleware - après routes mais avant 404
 app.use(auditMiddleware);
 
+// Scripts injectés par Cloudflare (bot-management / Turnstile). Sur localhost ils
+// n'existent pas ; on renvoie un JS valide (vide) pour éviter les erreurs console
+// "Unexpected token '<'" / "404 ERR_ABORTED" sur /cdn-cgi/.../main.js
+app.use('/cdn-cgi', (req, res) => {
+  res.type('application/javascript').send('/* Cloudflare script non disponible en local */');
+});
+
 // 404 pour API uniquement (pas de wildcard *)
 app.use((req, res, next) => {
   if (req.originalUrl.startsWith('/api')) {
@@ -131,12 +138,11 @@ app.use((req, res, next) => {
 // Fallback SPA - SANS wildcard pour Express 5 (app.use sans path)
 // Cela évite complètement path-to-regexp
 app.use((req, res) => {
-  // Si c'est un fichier qui n'existe pas dans /public, on renvoie index.html pour SPA
-  // Sauf pour /uploads déjà géré
-  if (req.method === 'GET') {
-    return res.sendFile(path.join(__dirname,'public','index.html'));
-  }
-  res.status(404).json({error:'Non trouvé'});
+  if (req.method !== 'GET') return res.status(404).json({error:'Non trouvé'});
+  // Ne JAMAIS renvoyer index.html pour une ressource statique (fichier .js/.css/...).
+  // Sinon le navigateur reçoit du HTML là où il attend du JS -> "Unexpected token '<'".
+  if (path.extname(req.path)) return res.status(404).json({error:'Ressource introuvable: '+req.path});
+  return res.sendFile(path.join(__dirname,'public','index.html'));
 });
 
 // Error handler

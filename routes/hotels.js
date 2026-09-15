@@ -21,20 +21,20 @@ router.get('/:id', async (req,res)=>{
 });
 
 router.post('/', authenticate, async (req,res)=>{
-  const { nom, wilaya_id, adresse, etoiles, telephone, email, site_web, capacite, prix_moyen, contact_reservation, notes } = req.body;
+  const { nom, wilaya_id, adresse, etoiles, telephone, email, site_web, nb_chambres_single, nb_chambres_double, nb_chambres_suite, prix_moyen, notes } = req.body;
   if(!nom||!wilaya_id) return res.status(400).json({error:'Nom et wilaya requis'});
   const [result]= await pool.query(
-    `INSERT INTO hotels (nom,wilaya_id,adresse,etoiles,telephone,email,site_web,capacite,prix_moyen,contact_reservation,notes) VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
-    [nom,wilaya_id,adresse,etoiles||3,telephone,email,site_web,capacite||0,prix_moyen||0,contact_reservation,notes]
+    `INSERT INTO hotels (nom,wilaya_id,adresse,etoiles,telephone,email,site_web,nb_chambres_single,nb_chambres_double,nb_chambres_suite,prix_moyen,notes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
+    [nom,wilaya_id,adresse,etoiles||3,telephone,email,site_web,nb_chambres_single||0,nb_chambres_double||0,nb_chambres_suite||0,prix_moyen||0,notes]
   );
   res.json({ id: result.insertId });
 });
 
 router.put('/:id', authenticate, async (req,res)=>{
-  const { nom, wilaya_id, adresse, etoiles, telephone, email, site_web, capacite, prix_moyen, contact_reservation, notes } = req.body;
+  const { nom, wilaya_id, adresse, etoiles, telephone, email, site_web, nb_chambres_single, nb_chambres_double, nb_chambres_suite, prix_moyen, notes } = req.body;
   await pool.query(
-    `UPDATE hotels SET nom=?,wilaya_id=?,adresse=?,etoiles=?,telephone=?,email=?,site_web=?,capacite=?,prix_moyen=?,contact_reservation=?,notes=? WHERE id=?`,
-    [nom,wilaya_id,adresse,etoiles,telephone,email,site_web,capacite,prix_moyen,contact_reservation,notes,req.params.id]
+    `UPDATE hotels SET nom=?,wilaya_id=?,adresse=?,etoiles=?,telephone=?,email=?,site_web=?,nb_chambres_single=?,nb_chambres_double=?,nb_chambres_suite=?,prix_moyen=?,notes=? WHERE id=?`,
+    [nom,wilaya_id,adresse,etoiles||3,telephone,email,site_web,nb_chambres_single||0,nb_chambres_double||0,nb_chambres_suite||0,prix_moyen||0,notes,req.params.id]
   );
   res.json({ message:'ok' });
 });

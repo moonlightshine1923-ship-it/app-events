@@ -13,6 +13,15 @@ router.get('/event/:eventId', async (req,res)=>{
   res.json(rows);
 });
 
+router.get('/:id', async (req,res)=>{
+  const [rows]= await pool.query(`
+    SELECT b.*, p.nom, p.prenom, p.email, p.type FROM billets_avion b
+    JOIN personnes p ON p.id=b.personne_id
+    WHERE b.id=?`,[req.params.id]);
+  if(!rows.length) return res.status(404).json({error:'Non trouvé'});
+  res.json(rows[0]);
+});
+
 router.post('/', authenticate, upload.single('billet'), async (req,res)=>{
   const { event_id, personne_id, compagnie, num_vol_aller, num_vol_retour, aeroport_depart, aeroport_arrivee, date_depart, date_retour, classe, prix, statut, notes } = req.body;
   const billet_file_path = req.file ? req.file.path : null;

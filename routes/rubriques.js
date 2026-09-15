@@ -8,6 +8,12 @@ router.get('/', async (req,res)=>{
   res.json(rows);
 });
 
+router.get('/:id', async (req,res)=>{
+  const [rows]= await pool.query('SELECT * FROM rubriques WHERE id=?',[req.params.id]);
+  if(!rows.length) return res.status(404).json({error:'Non trouvé'});
+  res.json(rows[0]);
+});
+
 router.post('/', authenticate, async (req,res)=>{
   const { nom, description, couleur } = req.body;
   const [result]= await pool.query('INSERT INTO rubriques (nom,description,couleur) VALUES (?,?,?)',[nom,description,couleur]);

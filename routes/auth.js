@@ -2,7 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../config/db.js';
-import { authenticate, authorize } from '../middleware/auth.js';
+import { authenticate, authorize, isPrivilegedRole } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -63,6 +63,8 @@ router.put('/users/:id', authenticate, authorize('super_admin','admin'), async (
 });
 
 router.delete('/users/:id', authenticate, authorize('super_admin'), async (req,res)=>{
+  // Strict: only a genuine super_admin may delete users (normalize role check).
+  if(!isPrivilegedRole(req.user.role)) return res.status(403).json({ error:'Réservé au super admin' });
   await pool.query('DELETE FROM users WHERE id=?',[req.params.id]);
   res.json({ message:'Supprimé' });
 });

@@ -4,62 +4,78 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Event Manager Algérie - Gestion Événements</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-<link href="css/style.css" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232f6bff'/%3E%3Ctext x='16' y='22' font-size='18' font-family='sans-serif' fill='%23fff' text-anchor='middle'%3E%E2%97%86%3C/text%3E%3C/svg%3E">
+<link href="vendor/fonts-gf.css" rel="stylesheet">
+<link href="vendor/bootstrap.min.css" rel="stylesheet">
+<link href="vendor/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css?v=2" rel="stylesheet">
 </head>
 <body>
 
 <!-- Login Page -->
 <div id="loginPage" class="login-wrapper">
-  <div class="login-card card p-4 shadow-lg">
-    <div class="text-center mb-4">
-      <h3 class="fw-bold"><i class="bi bi-calendar-event text-primary"></i> Event Manager DZ</h3>
-      <p class="text-muted small">Gestion complète d'événements - 58 Wilayas</p>
+  <div class="login-card card p-0">
+    <div class="login-head">
+      <div class="login-logo"><i class="bi bi-calendar2-week"></i></div>
+      <h3 class="fw-bold">Event Manager <span style="color:var(--primary)">DZ</span></h3>
+      <div class="login-sub">Gestion complète d'événements — 58 Wilayas</div>
     </div>
-    <form id="loginForm">
-      <div class="mb-3">
-        <label class="form-label">Email ou Username</label>
-        <input id="loginEmail" class="form-control" required placeholder="admin@event.dz">
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Mot de passe</label>
-        <input id="loginPassword" type="password" class="form-control" required>
-      </div>
-      <button class="btn btn-primary w-100" type="submit">Connexion</button>
-    </form>
-    <hr>
-    <div class="small">
-      <details>
-        <summary class="text-primary" style="cursor:pointer">Premier lancement? Créer super admin</summary>
-        <div id="firstAdminForm" class="mt-3">
-          <input id="firstUsername" class="form-control mb-2" placeholder="username">
-          <input id="firstEmail" class="form-control mb-2" placeholder="email">
-          <input id="firstPassword" type="password" class="form-control mb-2" placeholder="password">
-          <button onclick="firstAdmin()" class="btn btn-outline-primary w-100 btn-sm">Créer Super Admin</button>
-          <button onclick="initDb()" class="btn btn-outline-secondary w-100 btn-sm mt-2">Init DB + 58 Wilayas</button>
+    <div class="login-body">
+      <form id="loginForm">
+        <div class="mb-3">
+          <label class="form-label">Email ou Username</label>
+          <div class="input-icon">
+            <i class="bi bi-person"></i>
+            <input id="loginEmail" class="form-control" required placeholder="admin@event.dz">
+          </div>
         </div>
-      </details>
+        <div class="mb-4">
+          <label class="form-label">Mot de passe</label>
+          <div class="input-icon">
+            <i class="bi bi-lock"></i>
+            <input id="loginPassword" type="password" class="form-control" required placeholder="••••••••">
+          </div>
+        </div>
+        <button class="btn btn-primary w-100 py-2" type="submit">
+          <i class="bi bi-box-arrow-in-right me-1"></i> Connexion
+        </button>
+      </form>
+      <hr class="my-4 divider">
+      <div class="small text-center">
+        <details>
+          <summary class="text-primary fw-semibold" style="cursor:pointer">Premier lancement ? Créer super admin</summary>
+          <div id="firstAdminForm" class="mt-3 text-start">
+            <input id="firstUsername" class="form-control mb-2" placeholder="username">
+            <input id="firstEmail" class="form-control mb-2" placeholder="email">
+            <input id="firstPassword" type="password" class="form-control mb-2" placeholder="password">
+            <button onclick="firstAdmin()" class="btn btn-outline-primary w-100 btn-sm">Créer Super Admin</button>
+            <button onclick="initDb()" class="btn btn-outline-secondary w-100 btn-sm mt-2">Init DB + 58 Wilayas</button>
+          </div>
+        </details>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- App Wrapper -->
 <div id="appWrapper" class="d-none">
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="brand d-flex justify-content-between align-items-center">
-      <span><i class="bi bi-grid-3x3-gap-fill text-primary"></i> EventManager DZ</span>
-      <span class="badge bg-primary d-none" id="currentEventBadge"></span>
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="brand" style="cursor:pointer" onclick="showSection('events')" title="Retour à l'accueil">
+    <div class="sb-logo"><i class="bi bi-calendar2-week"></i></div>
+    <div class="sb-brand-text">
+      <span class="sb-brand-title">EventManager DZ</span>
+      <span class="sb-brand-sub">58 Wilayas</span>
     </div>
-    <div class="p-2">
-      <select id="eventSelector" class="form-select form-select-sm bg-dark text-white border-secondary"></select>
-    </div>
+  </div>
+  <div class="current-event-wrap">
+    <div class="current-event-label"><i class="bi bi-crosshair me-1"></i>Événement actif</div>
+    <select id="eventSelector" class="form-select form-select-sm"></select>
+  </div>
 
     <div class="nav-section">Principal</div>
+    <a class="nav-link" data-section="events" href="#" onclick="showSection('events')"><i class="bi bi-collection"></i> Accueil / Événements</a>
     <a class="nav-link active" data-section="dashboard" href="#" onclick="showSection('dashboard')"><i class="bi bi-speedometer2"></i> Dashboard Finance</a>
-    <a class="nav-link" data-section="events" href="#" onclick="showSection('events')"><i class="bi bi-calendar2-week"></i> Événements</a>
-    <a class="nav-link" data-section="rubriques" href="#" onclick="showSection('rubriques')"><i class="bi bi-tags"></i> Rubriques</a>
 
     <div class="nav-section">Géographie & Logistique</div>
     <a class="nav-link" data-section="hotels" href="#" onclick="showSection('hotels')"><i class="bi bi-building"></i> Wilayas & Hôtels</a>
@@ -79,96 +95,176 @@
     <a class="nav-link" data-section="programmes" href="#" onclick="showSection('programmes')"><i class="bi bi-journal-text"></i> Programme / Déroulement</a>
 
     <div class="nav-section">Système</div>
+    <a class="nav-link" data-section="users" href="#" onclick="showSection('users')"><i class="bi bi-person-gear"></i> Utilisateurs & Permissions</a>
     <a class="nav-link" data-section="audit" href="#" onclick="showSection('audit')"><i class="bi bi-clock-history"></i> Journal Audit</a>
     <a class="nav-link" href="#" onclick="logout()"><i class="bi bi-box-arrow-left"></i> Déconnexion</a>
 
-    <div class="p-3 small text-muted">User: <span id="userDisplay"></span></div>
+    <div class="user-box">
+      <div class="avatar" id="sidebarAvatar">U</div>
+      <div>
+        <div class="u-name" id="userDisplay"></div>
+        <div class="u-role" id="userRole">Super admin</div>
+      </div>
+    </div>
   </div>
 
   <!-- Main -->
   <div class="main">
     <div class="topbar">
-      <div class="d-flex align-items-center gap-2">
-        <button class="btn btn-outline-secondary d-lg-none" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
-        <h5 class="mb-0 d-none d-md-block">Gestion Événements - Algérie 58 Wilayas</h5>
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-ghost d-lg-none p-2" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
+        <div class="page-heading">
+          <span class="page-title" id="pageTitle">Dashboard Finance</span>
+          <span class="page-subtitle" id="pageSubtitle">Vue d'ensemble de l'événement</span>
+        </div>
       </div>
-      <div class="d-flex gap-2">
-        <button class="btn btn-sm btn-outline-primary" onclick="refreshDashboard()"><i class="bi bi-arrow-clockwise"></i> Rafraîchir</button>
-        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalEvent"><i class="bi bi-plus-lg"></i> Nouvel Événement</button>
+
+      <div class="topbar-select">
+        <i class="bi bi-calendar2-week"></i>
+        <select id="topbarEventSelector" class="form-select form-select-sm">
+          <option value="">-- Tous / Sélectionner Événement --</option>
+        </select>
+      </div>
+
+      <div class="searchbar">
+        <i class="bi bi-search"></i>
+        <input id="globalSearch" type="text" placeholder="Rechercher dans la page...">
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-sm btn-ghost" onclick="refreshDashboard()" title="Rafraîchir"><i class="bi bi-arrow-clockwise"></i></button>
+        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalEvent"><i class="bi bi-plus-lg me-1"></i> Nouvel Événement</button>
+        <div class="user-chip" id="userChip" title="Changer d'utilisateur">
+          <div class="avatar" id="topbarAvatar">U</div>
+          <div class="chip-meta">
+            <div class="chip-name" id="userChipName">Utilisateur</div>
+            <div class="chip-role" id="userChipRole">Connecté</div>
+          </div>
+          <i class="bi bi-chevron-down chev"></i>
+          <div class="user-menu" id="userMenu">
+            <div class="um-head"><b id="umName">Utilisateur</b><span id="umRole">Connecté</span></div>
+            <div class="um-item um-danger" onclick="logout()"><i class="bi bi-box-arrow-left"></i> Se déconnecter</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="p-4">
+    <div class="content-area">
       <!-- DASHBOARD -->
       <div id="section-dashboard" class="content-section">
-        <div id="dashboardEmpty" class="text-center py-5">
-          <i class="bi bi-calendar-x" style="font-size:4rem;color:#cbd5e0"></i>
-          <h4 class="mt-3 text-muted">Aucun événement sélectionné</h4>
-          <p class="text-muted">Créez ou sélectionnez un événement en haut à gauche</p>
-          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEvent">Créer Événement</button>
+        <div id="dashboardEmpty" class="dash-empty text-center py-5">
+          <div class="dash-empty-ico"><i class="bi bi-calendar-x"></i></div>
+          <h4 class="mt-3">Aucun événement sélectionné</h4>
+          <p>Créez ou sélectionnez un événement pour piloter votre bilan.</p>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEvent"><i class="bi bi-plus-lg me-1"></i>Créer Événement</button>
         </div>
         <div id="dashboardContent" class="d-none">
-          <div class="row g-3 mb-4">
-            <div class="col-6 col-lg-2"><div class="stat-card"><div class="d-flex justify-content-between"><div><small class="text-muted">PERSONNES</small><h4 id="statPersonnes">0</h4></div><div class="stat-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-people"></i></div></div></div></div>
-            <div class="col-6 col-lg-2"><div class="stat-card"><div class="d-flex justify-content-between"><div><small class="text-muted">EXPOSANTS</small><h4 id="statExposants">0</h4></div><div class="stat-icon bg-info bg-opacity-10 text-info"><i class="bi bi-shop"></i></div></div></div></div>
-            <div class="col-6 col-lg-2"><div class="stat-card"><div class="d-flex justify-content-between"><div><small class="text-muted">VIP</small><h4 id="statVip">0</h4></div><div class="stat-icon bg-warning bg-opacity-10 text-warning"><i class="bi bi-star"></i></div></div></div></div>
-            <div class="col-6 col-lg-2"><div class="stat-card"><div class="d-flex justify-content-between"><div><small class="text-muted">STANDS OCC</small><h4 id="statStands">0</h4></div><div class="stat-icon bg-success bg-opacity-10 text-success"><i class="bi bi-grid"></i></div></div></div></div>
-            <div class="col-6 col-lg-2"><div class="stat-card"><div class="d-flex justify-content-between"><div><small class="text-muted">EMPLOYÉS</small><h4 id="statEmployes">0</h4></div><div class="stat-icon bg-dark bg-opacity-10 text-dark"><i class="bi bi-person-badge"></i></div></div></div></div>
-            <div class="col-6 col-lg-2"><div class="stat-card"><div class="d-flex justify-content-between"><div><small class="text-muted">SPONSORS</small><h4 id="statSponsors">0</h4></div><div class="stat-icon bg-danger bg-opacity-10 text-danger"><i class="bi bi-award"></i></div></div></div></div>
+
+          <!-- HERO -->
+          <div class="dash-hero">
+            <div class="dash-hero-glow"></div>
+            <div class="dash-hero-main">
+              <div class="dash-hero-chip"><span class="dot-live"></span> Événement actif</div>
+              <div class="dash-hero-title" id="dashEventTitle">Tableau de bord</div>
+              <div class="dash-hero-meta" id="dashEventMeta">—</div>
+            </div>
+            <div class="dash-hero-side">
+              <span class="dash-hero-stat"><small>Budget</small><b id="dashHeroBudget">—</b></span>
+              <span class="dash-hero-stat"><small>Balance</small><b id="dashHeroBalance">—</b></span>
+            </div>
           </div>
 
+          <!-- KPIs -->
+          <div class="row g-3 mb-4">
+            <div class="col-6 col-lg-2"><div class="stat-card" style="--accent:linear-gradient(135deg,#4f8bff,#2456e0)">
+              <div class="d-flex justify-content-between align-items-center"><div><small>Personnes</small><h4 id="statPersonnes">0</h4><span class="stat-foot">invités &amp; équipe</span></div></div></div></div>
+            <div class="col-6 col-lg-2"><div class="stat-card" style="--accent:linear-gradient(135deg,#0ea5e9,#0369a1)">
+              <div class="d-flex justify-content-between align-items-center"><div><small>Exposants</small><h4 id="statExposants">0</h4><span class="stat-foot">stand &amp; fiche</span></div></div></div></div>
+            <div class="col-6 col-lg-2"><div class="stat-card" style="--accent:linear-gradient(135deg,#f59e0b,#c2740a)">
+              <div class="d-flex justify-content-between align-items-center"><div><small>VIP</small><h4 id="statVip">0</h4><span class="stat-foot">invités privilèges</span></div></div></div></div>
+            <div class="col-6 col-lg-2"><div class="stat-card" style="--accent:linear-gradient(135deg,#12b76a,#0b8a4c)">
+              <div class="d-flex justify-content-between align-items-center"><div><small>Stands occ.</small><h4 id="statStands">0/0</h4><span class="stat-foot">du plan</span></div></div></div></div>
+            <div class="col-6 col-lg-2"><div class="stat-card" style="--accent:linear-gradient(135deg,#6b7a93,#3b4a63)">
+              <div class="d-flex justify-content-between align-items-center"><div><small>Employés</small><h4 id="statEmployes">0</h4><span class="stat-foot">équipe terrain</span></div></div></div></div>
+            <div class="col-6 col-lg-2"><div class="stat-card" style="--accent:linear-gradient(135deg,#ef4444,#c72d2d)">
+              <div class="d-flex justify-content-between align-items-center"><div><small>Sponsors</small><h4 id="statSponsors">0</h4><span class="stat-foot">partenaires</span></div></div></div></div>
+          </div>
+
+          <!-- Main grid -->
           <div class="row g-3">
-            <div class="col-lg-4">
-              <div class="card mb-3"><div class="card-header">💰 Bilan Financier Global</div><div class="card-body">
-                <div class="row g-2 mb-3">
-                  <div class="col-12"><div class="finance-card p-3"><small>ENTRANTS</small><h3 id="financeEntrants">0 DA</h3><small>Budget initial + Exposants + Sponsors</small></div></div>
-                  <div class="col-12"><div class="finance-card red p-3"><small>SORTANTS</small><h3 id="financeSortants">0 DA</h3><small>Employés + Conventions + Billets + Hôtels + Restauration</small></div></div>
-                  <div class="col-12"><div class="finance-card dark p-3"><small>BALANCE</small><h3 id="financeBalance">0 DA</h3></div></div>
+            <div class="col-lg-7">
+              <div class="card mb-3">
+                <div class="card-header"><span><i class="bi bi-wallet2 me-1"></i> Bilan Financier</span><span class="dash-header-note">Global</span></div>
+                <div class="card-body">
+                  <div class="finance-grid">
+                    <div class="finance-card"><small>Entrants</small><h3 id="financeEntrants">0 DA</h3><div class="sub">Budget + Exposants + Sponsors</div></div>
+                    <div class="finance-card red"><small>Sortants</small><h3 id="financeSortants">0 DA</h3><div class="sub">Équipe + Prestataires + Logistique</div></div>
+                    <div class="finance-card dark"><small><i class="bi bi-arrow-left-right"></i> Balance</small><h3 id="financeBalance">0 DA</h3><div class="sub">Résultat net de l'événement</div></div>
+                  </div>
+                  <div class="finance-break mt-3">
+                    <div class="fb-title">Répartition des entrées / sorties</div>
+                    <div id="financeDetail"></div>
+                  </div>
                 </div>
-                <ul id="financeDetail" class="list-group list-group-flush small"></ul>
-              </div></div>
-              <div class="card mb-3"><div class="card-header d-flex justify-content-between"><span>🔔 Alertes Hôtel (chambre double → single)</span></div><div class="card-body" id="hotelAlerts"></div></div>
-              <div class="card"><div class="card-header">Notifications</div><div class="card-body small" id="notificationsList" style="max-height:300px;overflow:auto"></div></div>
-            </div>
-            <div class="col-lg-8">
-              <div class="card mb-3"><div class="card-header">Plan des Stands (places prises / libres)</div><div class="card-body">
-                <div id="standsLegend" class="small text-muted mb-2"></div>
-                <div id="standsGrid" class="stand-grid" style="min-height:200px"></div>
-              </div></div>
+              </div>
+
               <div class="row g-3">
-                <div class="col-md-6"><div class="card"><div class="card-header">Derniers Exposants</div><div class="card-body p-0"><div class="table-responsive"><table class="table table-sm mb-0"><tbody id="exposantsTableBody"></tbody></table></div></div></div></div>
-                <div class="col-md-6"><div class="card"><div class="card-header">Programme à venir</div><div class="card-body p-0"><div class="table-responsive"><table class="table table-sm mb-0"><tbody id="programmesTableBodyDash"></tbody></table></div></div></div></div>
+                <div class="col-md-6">
+                  <div class="card h-100">
+                    <div class="card-header"><span><i class="bi bi-exclamation-triangle me-1"></i> Alertes Hôtel</span><span class="badge bg-soft-danger">Auto</span></div>
+                    <div class="card-body small" id="hotelAlerts" style="max-height:240px;overflow:auto"></div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card h-100">
+                    <div class="card-header"><span><i class="bi bi-bell me-1"></i> Notifications</span><span class="badge bg-soft-primary">Live</span></div>
+                    <div class="card-body small" id="notificationsList" style="max-height:240px;overflow:auto"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-5">
+              <div class="card mb-3">
+                <div class="card-header"><span><i class="bi bi-grid-3x3 me-1"></i> Plan des Stands</span><span id="standsOccBadge" class="dash-header-note">—</span></div>
+                <div class="card-body">
+                  <div id="standsLegend" class="stands-legend mb-3"></div>
+                  <div id="standsGrid" class="stand-grid" style="min-height:220px"></div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header"><span><i class="bi bi-receipt me-1"></i> Derniers exposants</span></div>
+                <div class="card-body p-0"><div class="table-responsive"><table class="table table-sm mb-0"><tbody id="exposantsTableBody"></tbody></table></div></div>
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
       <!-- EVENTS -->
       <div id="section-events" class="content-section d-none">
-        <div class="card"><div class="card-header d-flex justify-content-between"><span>Liste des Événements</span><button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalEvent">+ Nouveau</button></div>
-          <div class="table-responsive"><table class="table table-hover"><thead><tr><th>Événement / Rubrique</th><th>Wilaya / Lieu</th><th>Dates</th><th>Statut</th><th>Stats</th><th>Actions</th></tr></thead><tbody id="eventsTableBody"></tbody></table></div>
+        <div class="home-hero">
+          <div class="home-hero-glow"></div>
+          <div class="home-hero-main">
+            <div class="home-hero-chip"><i class="bi bi-stars me-1"></i> Menu principal</div>
+            <div class="home-hero-title">Choisissez un événement à piloter</div>
+            <div class="home-hero-sub">Sélectionnez une carte pour ouvrir son espace de gestion (dashboard, stands, participants, finance…)</div>
+          </div>
+          <button class="btn btn-light btn-home-add" data-bs-toggle="modal" data-bs-target="#modalEvent"><i class="bi bi-plus-lg me-1"></i> Nouvel Événement</button>
         </div>
-      </div>
-
-      <!-- RUBRIQUES -->
-      <div id="section-rubriques" class="content-section d-none">
-        <div class="card"><div class="card-header d-flex justify-content-between"><span>Rubriques / Catégories</span><button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalRubrique">+ Rubrique</button></div>
-          <div class="table-responsive"><table class="table"><thead><tr><th>Nom</th><th>Description</th><th>Action</th></tr></thead><tbody id="rubriquesTableBody"></tbody></table></div>
-        </div>
+        <div id="homeEventsGrid" class="row g-3"></div>
       </div>
 
       <!-- HOTELS -->
       <div id="section-hotels" class="content-section d-none">
         <div class="row g-3">
-          <div class="col-lg-8"><div class="card"><div class="card-header d-flex gap-2"><span>Hôtels par Wilaya</span>
+          <div class="col-12"><div class="card"><div class="card-header d-flex gap-2 flex-wrap"><span>Hôtels par Wilaya</span>
             <select id="filterHotelWilaya" class="form-select form-select-sm wilaya-select" style="max-width:200px"></select>
             <button class="btn btn-sm btn-outline-secondary" onclick="loadHotels()">Tous</button>
             <button class="btn btn-sm btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#modalHotel">+ Hôtel</button>
           </div><div class="table-responsive"><table class="table"><thead><tr><th>Hôtel</th><th>Adresse</th><th>Capacité</th><th>Prix</th><th>Actions</th></tr></thead><tbody id="hotelsTableBody"></tbody></table></div></div></div>
-          <div class="col-lg-4"><div class="card"><div class="card-header">Info: Sélection Wilaya</div><div class="card-body small text-muted">Quand vous créez un événement et choisissez une Wilaya, la liste des hôtels disponibles dans cette wilaya s'affichera automatiquement via l'API /wilayas/:id/hotels. Vous pouvez aussi ajouter vous-même vos hôtels ici.</div></div>
-            <div class="card mt-3"><div class="card-header">58 Wilayas</div><div class="card-body" style="max-height:400px;overflow:auto"><div id="wilayasList" class="small"></div></div></div>
-          </div>
         </div>
       </div>
 
@@ -178,13 +274,13 @@
           <span>Participants (Invités, VIP, Exposants, Autres)</span>
           <select id="filterPersonneType" class="form-select form-select-sm" style="max-width:180px" onchange="loadPersonnes()"><option value="">Tous types</option><option value="exposant">Exposants</option><option value="invite_vip">Invités VIP</option><option value="invite_normal">Invités Normaux</option><option value="autre">Autres</option></select>
           <button class="btn btn-sm btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#modalPersonne">+ Ajouter Personne</button>
-        </div><div class="table-responsive"><table class="table"><thead><tr><th>Type / Nom</th><th>Email / Tel</th><th>Entreprise / Poste</th><th>Wilaya</th><th>Action</th></tr></thead><tbody id="personnesTableBody"></tbody></table></div></div>
+        </div><div class="table-responsive"><table class="table"><thead><tr><th>Type</th><th>Nom</th><th>Email / Tel</th><th>Entreprise / Poste</th><th>Wilaya</th><th>Action</th></tr></thead><tbody id="personnesTableBody"></tbody></table></div></div>
       </div>
 
       <!-- EXPOSANTS -->
       <div id="section-exposants" class="content-section d-none">
         <div class="card"><div class="card-header d-flex justify-content-between"><span>Tableau Exposants + Fiche Technique + Paiement (email requis)</span><button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalExposant">+ Ajouter Exposant (auto stand)</button></div>
-          <div class="table-responsive"><table class="table"><thead><tr><th>Exposant / Email</th><th>Domaine / Convoqué par</th><th>Stand</th><th>Paiement</th><th>Fiche</th></tr></thead><tbody id="exposantsTableBody"></tbody></table></div>
+          <div class="table-responsive"><table class="table"><thead><tr><th>Type</th><th>Exposant / Email</th><th>Domaine / Convoqué par</th><th>Stand</th><th>Paiement</th><th>Fiche</th></tr></thead><tbody id="exposantsTableBody"></tbody></table></div>
           <div class="card-footer small text-muted">Lors de l'ajout d'un exposant, son stand est automatiquement ajouté et coloré sur le plan. Gestion emails obligatoire incluse.</div>
         </div>
       </div>
@@ -204,14 +300,14 @@
       <!-- EMPLOYES -->
       <div id="section-employes" class="content-section d-none">
         <div class="card"><div class="card-header d-flex justify-content-between"><span>Équipe & Employés (hôtesses, sécurité, organisateurs... + salaire total)</span><button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalEmploye">+ Employé</button></div>
-          <div class="table-responsive"><table class="table"><thead><tr><th>Nom / Email</th><th>Poste</th><th>Tâche / Lieu</th><th>Salaire total</th><th>Statut Paiement</th></tr></thead><tbody id="employesTableBody"></tbody></table></div>
+          <div class="table-responsive"><table class="table"><thead><tr><th>Nom / Email</th><th>Poste</th><th>Tâche / Lieu</th><th>Salaire total</th><th>Statut Paiement</th><th>Actions</th></tr></thead><tbody id="employesTableBody"></tbody></table></div>
         </div>
       </div>
 
       <!-- SPONSORS -->
       <div id="section-sponsors" class="content-section d-none">
         <div class="card"><div class="card-header d-flex justify-content-between"><span>Sponsors Platinium / Gold / Silver</span><button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalSponsor">+ Sponsor</button></div>
-          <div class="table-responsive"><table class="table"><thead><tr><th>Type / Nom</th><th>Contact</th><th>Montant</th><th>Avantages</th></tr></thead><tbody id="sponsorsTableBody"></tbody></table></div>
+          <div class="table-responsive"><table class="table"><thead><tr><th>Type</th><th>Nom</th><th>Contact</th><th>Montant</th><th>Avantages</th><th>Actions</th></tr></thead><tbody id="sponsorsTableBody"></tbody></table></div>
         </div>
       </div>
 
@@ -248,9 +344,26 @@
         <div class="card"><div class="card-header d-flex justify-content-between"><span>Déroulement Séminaire / Programme (temps speech, fichiers ppt/pdf)</span><button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalProgramme">+ Créneau</button></div><div class="table-responsive"><table class="table"><thead><tr><th>Jour / Heure</th><th>Titre / Thème</th><th>Intervenant (VIP?)</th><th>Salle</th><th>Présentation</th></tr></thead><tbody id="programmesTableBody"></tbody></table></div></div>
       </div>
 
+      <!-- USERS & PERMISSIONS -->
+      <div id="section-users" class="content-section d-none">
+        <div class="card">
+          <div class="card-header">
+            <span><i class="bi bi-person-gear me-1"></i> Utilisateurs &amp; Permissions</span>
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#modalUser"><i class="bi bi-plus-lg me-1"></i> Ajouter Utilisateur</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table">
+              <thead><tr><th>Utilisateur</th><th>Email</th><th>Rôle</th><th>Permissions</th><th>Statut</th><th>Actions</th></tr></thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+          <div class="card-footer small text-muted"><i class="bi bi-info-circle me-1"></i>Les rôles prédéfinis (super_admin, admin, manager, finance, viewer) sont complétés par des permissions détaillées par module. Seul un super_admin peut supprimer un utilisateur.</div>
+        </div>
+      </div>
+
       <!-- AUDIT -->
       <div id="section-audit" class="content-section d-none">
-        <div class="card"><div class="card-header">Journal d'Audit (toutes actions POST/PUT/DELETE loggées)</div><div class="table-responsive"><table class="table table-sm"><thead><tr><th>Date</th><th>User</th><th>Action</th><th>Table #ID</th><th>Détails</th></tr></thead><tbody id="auditTableBody"></tbody></table></div></div>
+        <div class="card"><div class="card-header"><span><i class="bi bi-clock-history me-1"></i> Journal d'Audit</span></div><div class="table-responsive"><table class="table table-sm"><thead><tr><th>Date</th><th>Utilisateur</th><th>Action</th></tr></thead><tbody id="auditTableBody"></tbody></table></div></div>
       </div>
 
     </div>
@@ -262,17 +375,14 @@
 
 <!-- MODALS -->
 <!-- Event -->
-<div class="modal fade" id="modalEvent" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Nouvel Événement</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form onsubmit="return createEvent(event)"><div class="modal-body row g-3">
-  <div class="col-md-6"><label class="form-label">Rubrique</label><select name="rubrique_id" id="eventRubriqueSelect" class="form-select"></select></div>
-  <div class="col-md-6"><label class="form-label">Wilaya</label><select name="wilaya_id" class="form-select wilaya-select"></select><small class="text-muted">→ filtrera hôtels dispo</small></div>
+<div class="modal fade" id="modalEvent" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Nouvel Événement</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form onsubmit="return saveEvent(event)"><div class="modal-body row g-3">
+  <div class="col-md-6"><label class="form-label">Wilaya</label><select name="wilaya_id" id="eventWilayaSelect" class="form-select wilaya-select"></select></div>
+  <div class="col-md-6"><label class="form-label">Hôtel</label><select name="emplacement" id="eventHotelSelect" class="form-select"><option value="">-- Choisir hôtel --</option></select><small class="text-muted">Liste des hôtels de la wilaya choisie</small></div>
   <div class="col-md-8"><label class="form-label">Titre événement</label><input name="titre" class="form-control" required></div>
   <div class="col-md-4"><label class="form-label">Thème</label><input name="theme" class="form-control"></div>
   <div class="col-12"><label class="form-label">Description / Infos complètes</label><textarea name="description" class="form-control" rows="2"></textarea></div>
-  <div class="col-md-6"><label class="form-label">Emplacement</label><input name="emplacement" class="form-control" placeholder="Palais des expositions..."></div>
-  <div class="col-md-3"><label class="form-label">Date début</label><input name="date_debut" type="date" class="form-control"></div>
-  <div class="col-md-3"><label class="form-label">Date fin</label><input name="date_fin" type="date" class="form-control"></div>
-  <div class="col-md-3"><label class="form-label">Heure début</label><input name="heure_debut" type="time" class="form-control"></div>
-  <div class="col-md-3"><label class="form-label">Heure fin</label><input name="heure_fin" type="time" class="form-control"></div>
+  <div class="col-md-6"><label class="form-label">Date début</label><input name="date_debut" type="date" class="form-control"></div>
+  <div class="col-md-6"><label class="form-label">Date fin</label><input name="date_fin" type="date" class="form-control"></div>
   <div class="col-md-3"><label class="form-label">Budget initial (entrants)</label><input name="budget_initial" type="number" step="0.01" class="form-control" value="0"></div>
   <div class="col-md-3"><label class="form-label">Nb personnes prévu</label><input name="nb_personnes_prevu" type="number" class="form-control"></div>
   <div class="col-md-2"><label class="form-label">Nb invités</label><input name="nb_invites" type="number" class="form-control"></div>
@@ -281,24 +391,21 @@
   <div class="col-md-4"><label class="form-label">Statut</label><select name="statut" class="form-select"><option value="brouillon">Brouillon</option><option value="planifie">Planifié</option><option value="en_cours">En cours</option><option value="termine">Terminé</option></select></div>
 </div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button><button type="submit" class="btn btn-primary">Créer</button></div></form></div></div></div>
 
-<!-- Rubrique -->
-<div class="modal fade" id="modalRubrique" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Nouvelle Rubrique</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form onsubmit="return createRubrique(event)"><div class="modal-body"><input name="nom" class="form-control mb-2" placeholder="Nom rubrique" required><textarea name="description" class="form-control mb-2" placeholder="Description"></textarea><input name="couleur" type="color" class="form-control form-control-color" value="#0d6efd"></div><div class="modal-footer"><button class="btn btn-primary" type="submit">Créer</button></div></form></div></div></div>
-
 <!-- Hotel -->
-<div class="modal fade" id="modalHotel" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Ajouter Hôtel</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form onsubmit="return createHotel(event)"><div class="modal-body row g-2"><div class="col-12"><input name="nom" class="form-control" placeholder="Nom hôtel" required></div><div class="col-6"><select name="wilaya_id" class="form-select wilaya-select" required></select></div><div class="col-6"><select name="etoiles" class="form-select"><option value="5">5★</option><option value="4">4★</option><option value="3" selected>3★</option><option value="2">2★</option></select></div><div class="col-12"><input name="adresse" class="form-control" placeholder="Adresse"></div><div class="col-6"><input name="telephone" class="form-control" placeholder="Téléphone"></div><div class="col-6"><input name="email" class="form-control" placeholder="Email"></div><div class="col-6"><input name="capacite" type="number" class="form-control" placeholder="Capacité"></div><div class="col-6"><input name="prix_moyen" type="number" class="form-control" placeholder="Prix moyen DA"></div><div class="col-12"><input name="contact_reservation" class="form-control" placeholder="Contact réservation"><textarea name="notes" class="form-control mt-2" placeholder="Notes"></textarea></div></div><div class="modal-footer"><button class="btn btn-primary" type="submit">Créer</button></div></form></div></div></div>
+<div class="modal fade" id="modalHotel" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="modalHotelTitle">Ajouter Hôtel</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form onsubmit="return saveHotel(event)"><div class="modal-body row g-2"><div class="col-12"><input name="nom" class="form-control" placeholder="Nom hôtel" required></div><div class="col-6"><select name="wilaya_id" class="form-select wilaya-select" required></select></div><div class="col-6"><select name="etoiles" class="form-select"><option value="5">5★</option><option value="4">4★</option><option value="3" selected>3★</option><option value="2">2★</option></select></div><div class="col-12"><input name="adresse" class="form-control" placeholder="Adresse"></div><div class="col-6"><input name="telephone" class="form-control" placeholder="Téléphone"></div><div class="col-6"><input name="email" class="form-control" placeholder="Email"></div><div class="col-6"><input name="capacite" type="number" class="form-control" placeholder="Capacité"></div><div class="col-6"><input name="prix_moyen" type="number" class="form-control" placeholder="Prix moyen DA"></div><div class="col-12"><input name="contact_reservation" class="form-control" placeholder="Contact réservation"><textarea name="notes" class="form-control mt-2" placeholder="Notes"></textarea></div></div><div class="modal-footer"><button class="btn btn-primary" type="submit" id="modalHotelSaveBtn">Créer</button></div></form></div></div></div>
 
 <!-- Personne -->
-<div class="modal fade" id="modalPersonne" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Ajouter Participant</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form onsubmit="return createPersonne(event)"><div class="modal-body row g-2">
-  <div class="col-6"><select name="type" class="form-select" required><option value="">Type</option><option value="exposant">Exposant</option><option value="invite_vip">Invité VIP</option><option value="invite_normal">Invité Normal</option><option value="autre">Autre</option></select></div><div class="col-6"><input name="type_custom" class="form-control" placeholder="Type custom (si autre)"></div>
+<div class="modal fade" id="modalPersonne" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="modalPersonneTitle">Ajouter Participant</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form onsubmit="return createPersonne(event)"><div class="modal-body row g-2">
+  <div class="col-12"><select name="type" class="form-select" required><option value="">Type</option><option value="exposant">Exposant</option><option value="invite_vip">Invité VIP</option><option value="invite_normal">Invité Normal</option><option value="autre">Autre</option></select></div>
   <div class="col-6"><input name="nom" class="form-control" placeholder="Nom" required></div><div class="col-6"><input name="prenom" class="form-control" placeholder="Prénom" required></div>
   <div class="col-6"><input name="email" class="form-control" placeholder="Email (obligatoire exposant)"></div><div class="col-6"><input name="telephone" class="form-control" placeholder="Téléphone"></div>
   <div class="col-6"><input name="entreprise" class="form-control" placeholder="Entreprise"></div><div class="col-6"><input name="poste" class="form-control" placeholder="Poste"></div>
   <div class="col-6"><select name="wilaya_id" class="form-select wilaya-select"></select></div><div class="col-6"><input name="pays" class="form-control" value="Algérie"></div>
   <div class="col-12"><textarea name="notes" class="form-control" placeholder="Notes"></textarea></div>
-</div><div class="modal-footer"><button class="btn btn-primary" type="submit">Ajouter</button></div></form></div></div></div>
+</div><div class="modal-footer"><button class="btn btn-primary" type="submit" id="modalPersonneBtn">Ajouter</button></div></form></div></div></div>
 
 <!-- Exposant -->
-<div class="modal fade" id="modalExposant" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Ajouter Exposant (stand auto + email)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form onsubmit="return createExposant(event)"><div class="modal-body row g-2">
+<div class="modal fade" id="modalExposant" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="modalExposantTitle">Ajouter Exposant</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form onsubmit="return createExposant(event)"><div class="modal-body row g-2">
   <div class="col-md-6"><input name="nom" class="form-control" placeholder="Nom" required></div><div class="col-md-6"><input name="prenom" class="form-control" placeholder="Prénom" required></div>
   <div class="col-md-6"><input name="email" class="form-control" placeholder="Email exposant (requis)" required></div><div class="col-md-6"><input name="telephone" class="form-control" placeholder="Téléphone"></div>
   <div class="col-md-6"><input name="entreprise" class="form-control" placeholder="Entreprise / Stand"></div><div class="col-md-6"><input name="poste" class="form-control" placeholder="Poste"></div>
@@ -306,16 +413,16 @@
   <div class="col-12"><textarea name="fiche_technique" class="form-control" rows="3" placeholder="Fiche technique exposant (besoins électriques, matériel, etc)"></textarea></div>
   <div class="col-md-4"><input name="superficie_demandee" class="form-control" placeholder="Superficie demandée (ex 3x3)"></div><div class="col-md-4"><select name="methode_paiement" class="form-select"><option value="">Méthode paiement</option><option value="especes">Espèces</option><option value="virement">Virement</option><option value="cheque">Chèque</option><option value="versement">Versement</option></select></div><div class="col-md-4"><input name="montant_paye" type="number" class="form-control" placeholder="Montant payé DA"></div>
   <div class="col-md-6"><div class="form-check mt-2"><input name="a_paye" type="checkbox" class="form-check-input" id="checkPaye"><label class="form-check-label" for="checkPaye">A payé ?</label></div></div><div class="col-md-6"><input name="besoins_speciaux" class="form-control" placeholder="Besoins spéciaux"></div>
-</div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button><button type="submit" class="btn btn-primary">Créer Exposant + Stand Auto</button></div></form></div></div></div>
+</div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button><button type="submit" class="btn btn-primary" id="modalExposantBtn">Créer Exposant + Stand Auto</button></div></form></div></div></div>
 
 <!-- Employe -->
-<div class="modal fade" id="modalEmploye" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Ajouter Employé / Équipe</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form onsubmit="return createEmploye(event)"><div class="modal-body row g-2">
+<div class="modal fade" id="modalEmploye" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="modalEmployeTitle">Ajouter Employé / Équipe</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form onsubmit="return createEmploye(event)"><div class="modal-body row g-2">
   <div class="col-6"><input name="nom" class="form-control" placeholder="Nom" required></div><div class="col-6"><input name="prenom" class="form-control" placeholder="Prénom" required></div>
   <div class="col-6"><select name="poste" class="form-select" required><option value="">Poste</option><option value="hotesse_accueil">Hôtesse d'accueil</option><option value="agent_securite">Agent sécurité</option><option value="organisateur">Organisateur</option><option value="technicien">Technicien</option><option value="chauffeur">Chauffeur</option><option value="nettoyage">Nettoyage</option><option value="autre">Autre</option></select></div><div class="col-6"><input name="poste_custom" class="form-control" placeholder="Poste custom"></div>
   <div class="col-12"><input name="tache" class="form-control" placeholder="Tâche attribuée"></div><div class="col-12"><input name="lieu_affectation" class="form-control" placeholder="Endroit présent (ex Hall A, Entrée VIP)"></div>
   <div class="col-6"><input name="telephone" class="form-control" placeholder="Téléphone"></div><div class="col-6"><input name="email" class="form-control" placeholder="Email"></div>
   <div class="col-4"><input name="salaire_jour" type="number" class="form-control" placeholder="Salaire/jour DA" required></div><div class="col-4"><input name="nb_jours" type="number" class="form-control" value="1" placeholder="Nb jours"></div><div class="col-4"><select name="statut_paiement" class="form-select"><option value="non_paye">Non payé</option><option value="paye">Payé</option><option value="partiel">Partiel</option></select></div>
-</div><div class="modal-footer"><button class="btn btn-primary" type="submit">Ajouter</button></div></form></div></div></div>
+</div><div class="modal-footer"><button class="btn btn-primary" type="submit" id="modalEmployeBtn">Ajouter</button></div></form></div></div></div>
 
 <!-- Programme -->
 <div class="modal fade" id="modalProgramme" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Ajouter Créneau Programme (speech)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form id="formProgramme" enctype="multipart/form-data"><div class="modal-body row g-2">
@@ -325,17 +432,17 @@
   <div class="col-md-4"><input name="intervenant_nom" class="form-control" placeholder="Nom intervenant"></div><div class="col-md-4"><input name="intervenant_prenom" class="form-control" placeholder="Prénom intervenant"></div><div class="col-md-4"><input name="intervenant_poste" class="form-control" placeholder="Poste"></div>
   <div class="col-md-4"><input name="intervenant_email" class="form-control" placeholder="Email intervenant"></div><div class="col-md-4"><input name="theme" class="form-control" placeholder="Thème"></div><div class="col-md-4"><input name="salle" class="form-control" placeholder="Salle"></div>
   <div class="col-md-6"><select name="type" class="form-select"><option value="presentation">Présentation</option><option value="discours">Discours</option><option value="pause">Pause</option><option value="atelier">Atelier</option><option value="table_ronde">Table ronde</option><option value="dejeuner">Déjeuner</option><option value="ceremonie">Cérémonie</option></select></div><div class="col-md-3"><div class="form-check mt-2"><input name="intervenant_is_vip" type="checkbox" class="form-check-input"><label class="form-check-label">VIP ?</label></div></div><div class="col-md-3"><input name="presentation" type="file" class="form-control" accept=".pdf,.ppt,.pptx,.doc,.docx"></div>
-</div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button><button type="submit" class="btn btn-primary">Enregistrer</button></div></form></div></div></div>
+</div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button><button type="submit" class="btn btn-primary" id="modalProgrammeBtn">Enregistrer</button></div></form></div></div></div>
 
-<!-- Extra Modals for remaining rubriques -->
-<div class="modal fade" id="modalSponsor" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Ajouter Sponsor (Platinium/Gold/Silver)</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form id="formSponsor" enctype="multipart/form-data"><div class="modal-body row g-2">
+<!-- Extra Modals -->
+<div class="modal fade" id="modalSponsor" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="modalSponsorTitle">Ajouter Sponsor</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form id="formSponsor" enctype="multipart/form-data"><div class="modal-body row g-2">
   <div class="col-6"><input name="nom" class="form-control" placeholder="Nom sponsor" required></div><div class="col-6"><select name="type" class="form-select" required><option value="platinium">Platinium</option><option value="gold">Gold</option><option value="silver">Silver</option><option value="bronze">Bronze</option></select></div>
   <div class="col-6"><input name="entreprise" class="form-control" placeholder="Entreprise"></div><div class="col-6"><input name="montant" type="number" class="form-control" placeholder="Montant DA"></div>
   <div class="col-6"><input name="contact_nom" class="form-control" placeholder="Nom contact"></div><div class="col-6"><input name="contact_email" class="form-control" placeholder="Email contact"></div>
   <div class="col-6"><input name="contact_tel" class="form-control" placeholder="Tél contact"></div><div class="col-6"><input name="logo" type="file" class="form-control"></div>
   <div class="col-12"><textarea name="avantages" class="form-control" placeholder="Avantages sponsor"></textarea></div>
   <div class="col-12"><select name="statut_paiement" class="form-select"><option value="en_attente">En attente</option><option value="paye">Payé</option><option value="partiel">Partiel</option></select></div>
-</div><div class="modal-footer"><button type="submit" class="btn btn-primary">Enregistrer</button></div></form></div></div></div>
+</div><div class="modal-footer"><button type="submit" class="btn btn-primary" id="modalSponsorBtn">Enregistrer</button></div></form></div></div></div>
 
 <div class="modal fade" id="modalMenu" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Ajouter Menu Restauration</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form id="formMenu"><div class="modal-body row g-2">
   <div class="col-6"><select name="type_repas" class="form-select"><option value="dejeuner">Déjeuner</option><option value="petit_dej">Petit déj</option><option value="diner">Dîner</option><option value="pause_cafe_mat">Pause café matin</option><option value="pause_cafe_aprem">Pause café après-midi</option><option value="cocktail">Cocktail</option></select></div><div class="col-6"><input name="prix_par_personne" type="number" class="form-control" placeholder="Prix / pers" required></div>
@@ -378,8 +485,31 @@
   <div class="col-12"><label class="form-label small">Occupants (personnes)</label><select name="occupants" id="reservationOccupantsSelect" class="form-select personne-select" multiple size="4"></select><small class="text-muted">Ctrl+Click pour multiple. Si personne sort d'une double et reste 1 → notification auto</small></div>
 </div><div class="modal-footer"><button type="submit" class="btn btn-primary">Réserver</button></div></form></div></div></div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/app.js"></script>
+<!-- Utilisateur (ajout / édition) -->
+<div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="modalUserTitle">Nouvel Utilisateur</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><form id="formUser"><div class="modal-body row g-3">
+  <input type="hidden" name="id" id="userEditId">
+  <div class="col-md-6"><label class="form-label">Nom d'utilisateur</label><input name="username" id="userUsername" class="form-control" required></div>
+  <div class="col-md-6"><label class="form-label">Email</label><input name="email" id="userEmail" type="email" class="form-control" required></div>
+  <div class="col-md-6"><label class="form-label">Mot de passe</label><input name="password" id="userPassword" type="password" class="form-control" autocomplete="new-password"></div>
+  <div class="col-md-6"><label class="form-label">Rôle</label><select name="role" id="userRoleSelect" class="form-select">
+    <option value="super_admin">Super Admin</option>
+    <option value="admin">Admin</option>
+    <option value="manager" selected>Manager</option>
+    <option value="finance">Finance</option>
+    <option value="viewer">Lecture seule</option>
+  </select></div>
+  <div class="col-12">
+    <div class="d-flex justify-content-between align-items-center">
+      <label class="form-label mb-0">Permissions (ce que l'utilisateur peut faire)</label>
+      <button type="button" class="btn btn-sm btn-outline-primary" onclick="toggleAllPerms()"><i class="bi bi-check2-all me-1"></i>Tout cocher / décocher</button>
+    </div>
+    <div class="row g-2 mt-2 p-3 rounded" style="background:var(--surface-2);border:1px solid var(--line-2)" id="permGrid"></div>
+  </div>
+  <div class="col-12"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" name="is_active" id="userActive" checked><label class="form-check-label" for="userActive">Compte activé</label></div></div>
+</div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button><button type="submit" class="btn btn-primary" id="userSubmitBtn">Créer Utilisateur</button></div></form></div></div></div>
+
+<script src="vendor/bootstrap.bundle.min.js"></script>
+<script src="js/app.js?v=2"></script>
 <script>
 // extra inline small handlers for file upload forms
 document.addEventListener('DOMContentLoaded',()=>{
@@ -410,5 +540,5 @@ async function saveRestoConfig(e){
   try{ await apiFetch(`/restauration/event/${currentEventId}/config`,{method:'PUT', body:payload}); toast('Config sauvée'); loadRestauration(); }catch(err){ toast(err.message,'danger'); }
 }
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a353fbe939a3b8e3',t:'MTc4ODQzMDQyOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
